@@ -1,14 +1,15 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Navbar () {
   return (
-    <nav class='navbar navbar-expand-lg border-bottom navbar-light bg-light'>
-      <div class='container p-2'>
-        <a class='navbar-brand' href='#'>
+    <nav className='navbar navbar-expand-lg border-bottom navbar-light bg-light'>
+      <div className='container p-2'>
+        <Link className='navbar-brand' to='/'>
           <img src='media/images/logo.svg' style={{ width: '25%' }} alt='' />
-        </a>
+        </Link>
         <button
-          class='navbar-toggler'
+          className='navbar-toggler'
           type='button'
           data-bs-toggle='collapse'
           data-bs-target='#navbarSupportedContent'
@@ -16,40 +17,44 @@ function Navbar () {
           aria-expanded='false'
           aria-label='Toggle navigation'
         >
-          <span class='navbar-toggler-icon'></span>
+          <span className='navbar-toggler-icon'></span>
         </button>
-        <div class='collapse navbar-collapse' id='navbarSupportedContent'>
-          <form class='d-flex'>
-            <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
-              <li class='nav-item'>
-                <a class='nav-link active' aria-current='page' href='#'>
+        <div className='collapse navbar-collapse' id='navbarSupportedContent'>
+          <form className='d-flex'>
+            <ul className='navbar-nav me-auto mb-2 mb-lg-0'>
+              <li className='nav-item'>
+                <Link
+                  className='nav-link active'
+                  aria-current='page'
+                  to='/signup'
+                >
                   Signup
-                </a>
+                </Link>
               </li>
-              <li class='nav-item'>
-                <a class='nav-link active' href='#'>
+              <li className='nav-item'>
+                <Link className='nav-link active' to='/about'>
                   About
-                </a>
+                </Link>
               </li>
-              <li class='nav-item'>
-                <a class='nav-link active' href='#'>
+              <li className='nav-item'>
+                <Link className='nav-link active' to='/product'>
                   Product
-                </a>
+                </Link>
               </li>
-              <li class='nav-item'>
-                <a class='nav-link active' href='#'>
+              <li className='nav-item'>
+                <Link className='nav-link active' to='/pricing'>
                   Pricing
-                </a>
+                </Link>
               </li>
-              <li class='nav-item'>
-                <a class='nav-link active' href='#'>
+              <li className='nav-item'>
+                <Link className='nav-link active' to='/support'>
                   Support
-                </a>
+                </Link>
               </li>
-              <li class='nav-item'>
-                <a class='nav-link active' href='#'>
-                  <i class='fa-solid fa-bars'></i>
-                </a>
+              <li className='nav-item'>
+                <Link className='nav-link active' to='#'>
+                  <i className='fa-solid fa-bars'></i>
+                </Link>
               </li>
             </ul>
           </form>
