@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.nav-link {
+  margin-left: 40px;
+}
+
+.footer-text p {
+  text-align: justify;
+  line-height: 1.6;
+}
