@@ -674,7 +674,7 @@ hr {
 
 .list li {
   border-bottom: 0.8px solid rgb(235, 234, 234);
-  padding: 12px 10px 12px 14px;
+  /* padding: 12px 10px 12px 14px; */
   position: relative;
 }
 
