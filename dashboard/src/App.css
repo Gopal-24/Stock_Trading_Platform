@@ -841,3 +841,15 @@ hr {
 .action:hover {
   background-color: rgb(212, 212, 212);
 }
+
+.actions span {
+  display: flex;
+  align-items: center;
+}
+
+.actions span button {
+  height: 30px; /* sab buttons same height */
+  display: inline-flex; /* important */
+  align-items: center;
+  justify-content: center;
+}
