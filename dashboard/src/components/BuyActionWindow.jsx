@@ -19,6 +19,8 @@ const BuyActionWindow = ({ uid }) => {
       mode: 'BUY'
     })
 
+    window.location.reload()
+
     GeneralContext.closeBuyWindow()
   }
 

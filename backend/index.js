@@ -40,19 +40,53 @@ app.post("/newOrder", async (req, res) => {
   try {
     const { name, qty, price, mode } = req.body;
 
-    // save order history
-    await OrdersModel.create({ name, qty, price, mode });
+    // always save order
+    const order = await OrdersModel.create({ name, qty, price, mode });
 
     if (mode === "BUY") {
       await HoldingsModel.create({
         name,
         qty,
-        buyPrice: price,
-        currentPrice: price,
+        avg: price,
+        price,
+        net: "0.00%",
+        day: "0.00%",
       });
     }
 
-    res.status(201).json({ message: "Order placed & holding created" });
+    if (mode === "SELL") {
+      // 1️⃣ fetch all holdings of that stock
+      const holdings = await HoldingsModel.find({ name });
+
+      if (!holdings.length) {
+        return res.status(400).json({ error: "No holdings available to sell" });
+      }
+
+      // 2️⃣ total available qty
+      const totalQty = holdings.reduce((sum, h) => sum + h.qty, 0);
+
+      if (qty > totalQty) {
+        return res.status(400).json({ error: "Insufficient quantity to sell" });
+      }
+
+      // 3️⃣ reduce qty (FIFO)
+      let remainingQty = qty;
+
+      for (let h of holdings) {
+        if (remainingQty === 0) break;
+
+        if (h.qty <= remainingQty) {
+          remainingQty -= h.qty;
+          await HoldingsModel.deleteOne({ _id: h._id });
+        } else {
+          h.qty -= remainingQty;
+          remainingQty = 0;
+          await h.save();
+        }
+      }
+    }
+
+    res.status(201).json(order);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
