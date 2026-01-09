@@ -10,7 +10,7 @@ const Holdings = () => {
     axios.get('http://localhost:8080/allHoldings').then(res => {
       setAllHoldings(res.data)
     })
-  })
+  }, [])
 
   return (
     <>

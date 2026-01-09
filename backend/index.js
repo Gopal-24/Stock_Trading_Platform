@@ -44,13 +44,23 @@ app.post("/newOrder", async (req, res) => {
     const order = await OrdersModel.create({ name, qty, price, mode });
 
     if (mode === "BUY") {
+      const avg = price;
+
+      // simulate market movement ±3%
+      const marketChange = price * (Math.random() * 0.06 - 0.03);
+      const ltp = +(price + marketChange).toFixed(2);
+
+      const pnl = (ltp - avg) * qty;
+      const netPercent = ((ltp - avg) / avg) * 100;
+
       await HoldingsModel.create({
         name,
         qty,
-        avg: price,
-        price,
-        net: "0.00%",
-        day: "0.00%",
+        avg,
+        price: ltp,
+        net: `${netPercent >= 0 ? "+" : ""}${netPercent.toFixed(2)}%`,
+        day: `+${(Math.random() * 2).toFixed(2)}%`,
+        isLoss: netPercent < 0,
       });
     }
 
