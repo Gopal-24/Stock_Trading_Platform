@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const { HoldingsModel } = require("./models/HoldingsModel");
 const { PositionsModel } = require("./models/PositionsModel");
+const { OrdersModel } = require("./models/OrdersModel");
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -26,8 +27,45 @@ app.get("/allPositions", async (req, res) => {
   res.json(allPositions);
 });
 
-app.listen(PORT, () => {
-  console.log("app started");
-  mongoose.connect(mongo_url);
-  console.log("db connected");
+app.get("/allOrders", async (req, res) => {
+  try {
+    const orders = await OrdersModel.find({}).sort({ _id: -1 });
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
+
+app.post("/newOrder", async (req, res) => {
+  try {
+    const { name, qty, price, mode } = req.body;
+
+    // save order history
+    await OrdersModel.create({ name, qty, price, mode });
+
+    if (mode === "BUY") {
+      await HoldingsModel.create({
+        name,
+        qty,
+        buyPrice: price,
+        currentPrice: price,
+      });
+    }
+
+    res.status(201).json({ message: "Order placed & holding created" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+mongoose
+  .connect(mongo_url)
+  .then(() => {
+    console.log("db connected");
+    app.listen(PORT, () => {
+      console.log("app started");
+    });
+  })
+  .catch((err) => {
+    console.error("❌ DB connection failed:", err.message);
+  });

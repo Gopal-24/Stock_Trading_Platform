@@ -9,6 +9,9 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 
 import { watchlist } from '../data/data'
 
+import GeneralContext from './GeneralContext'
+import { useContext } from 'react'
+
 const WatchList = () => {
   return (
     <div className='watchlist-container'>
@@ -66,6 +69,12 @@ const WatchListItem = ({ stock }) => {
 }
 
 const WatchListActions = ({ uid }) => {
+  const generalContext = useContext(GeneralContext)
+
+  const handleBuyClick = () => {
+    generalContext.openBuyWindow(uid)
+  }
+
   return (
     <span className='actions'>
       <span>
@@ -74,6 +83,7 @@ const WatchListActions = ({ uid }) => {
           placement='top'
           arrow
           TransitionComponent={Grow}
+          onClick={handleBuyClick}
         >
           <button className='buy '>Buy</button>
         </Tooltip>

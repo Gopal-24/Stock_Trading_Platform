@@ -10,7 +10,7 @@ const Holdings = () => {
     axios.get('http://localhost:8080/allHoldings').then(res => {
       setAllHoldings(res.data)
     })
-  }, [])
+  })
 
   return (
     <>
@@ -22,7 +22,7 @@ const Holdings = () => {
             <tr>
               <th>Instrument</th>
               <th>Qty.</th>
-              <th>Avg. cost</th>
+              <th>Buy Price</th>
               <th>LTP</th>
               <th>Cur. val</th>
               <th>P&L</th>
@@ -33,8 +33,8 @@ const Holdings = () => {
 
           <tbody>
             {allHoldings.map((stock, index) => {
-              const currVal = stock.price * stock.qty
-              const isProfit = currVal - stock.avg * stock.qty >= 0.0
+              const curValue = stock.price * stock.qty
+              const isProfit = curValue - stock.avg * stock.qty >= 0.0
               const profClass = isProfit ? 'profit' : 'loss'
               const dayClass = stock.isLoss ? 'loss' : 'profit'
 
@@ -44,9 +44,9 @@ const Holdings = () => {
                   <td>{stock.qty}</td>
                   <td>{stock.avg.toFixed(2)}</td>
                   <td>{stock.price.toFixed(2)}</td>
-                  <td>{currVal.toFixed(2)}</td>
+                  <td>{curValue.toFixed(2)}</td>
                   <td className={profClass}>
-                    {(currVal - stock.avg * stock.qty).toFixed(2)}
+                    {(curValue - stock.avg * stock.qty).toFixed(2)}
                   </td>
                   <td className={profClass}>{stock.net}</td>
                   <td className={dayClass}>{stock.day}</td>
