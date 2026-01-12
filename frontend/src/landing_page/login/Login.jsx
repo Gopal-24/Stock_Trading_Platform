@@ -3,13 +3,12 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify'
 
-const Signup = () => {
+const Login = () => {
   const [inputValue, setInputValue] = useState({
     email: '',
-    password: '',
-    username: ''
+    password: ''
   })
-  const { email, password, username } = inputValue
+  const { email, password } = inputValue
   const handleOnChange = e => {
     const { name, value } = e.target
     setInputValue({
@@ -24,25 +23,26 @@ const Signup = () => {
     })
   const handleSuccess = msg =>
     toast.success(msg, {
-      position: 'bottom-right'
+      position: 'bottom-left'
     })
 
   const handleSubmit = async e => {
     e.preventDefault()
     try {
       const { data } = await axios.post(
-        'http://localhost:8080/signup',
+        'http://localhost:8080/login',
         {
           ...inputValue
         },
         { withCredentials: true }
       )
+      console.log(data)
       const { success, message } = data
       if (success) {
         handleSuccess(message)
         setTimeout(() => {
           window.location.href = 'http://localhost:5174'
-        }, 800)
+        }, 1000)
       } else {
         handleError(message)
       }
@@ -52,14 +52,13 @@ const Signup = () => {
     setInputValue({
       ...inputValue,
       email: '',
-      password: '',
-      username: ''
+      password: ''
     })
   }
 
   return (
     <div className='container mt-5'>
-      <h1 className='col-12 col-lg-6 offset-lg-3 text-center'>Sign-Up</h1>
+      <h1 className='col-12 col-lg-6 offset-lg-3 text-center'>Login</h1>
 
       <div className='row mt-3'>
         <div className='col-12 col-lg-6 offset-lg-3'>
@@ -82,24 +81,6 @@ const Signup = () => {
               <div className='invalid-feedback'>Email is required</div>
             </div>
 
-            {/* Username */}
-            <div className='mb-3'>
-              <label htmlFor='username' className='form-label'>
-                Username
-              </label>
-              <input
-                id='username'
-                className='form-control'
-                type='text'
-                name='username'
-                value={username}
-                placeholder='Enter your username'
-                onChange={handleOnChange}
-                required
-              />
-              <div className='invalid-feedback'>Enter a username</div>
-            </div>
-
             {/* Password */}
             <div className='mb-3'>
               <label htmlFor='password' className='form-label'>
@@ -119,14 +100,14 @@ const Signup = () => {
             </div>
 
             {/* Submit */}
-            <button type='submit' className='btn w-100 user-btn'>
-              Sign-Up
+            <button type='submit' className='btn user-btn w-100'>
+              Login
             </button>
 
-            {/* Login link */}
+            {/* Signup link */}
             <div className='text-center mt-3'>
               <span>
-                Already have an account? <Link to='/login'>Login</Link>
+                Don’t have an account? <Link to='/signup'>Signup</Link>
               </span>
             </div>
           </form>
@@ -138,4 +119,4 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default Login
