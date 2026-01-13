@@ -2,11 +2,13 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const axios = require("axios");
 
 const { HoldingsModel } = require("./models/HoldingsModel");
 const { PositionsModel } = require("./models/PositionsModel");
 const { OrdersModel } = require("./models/OrdersModel");
 const authRoute = require("./routes/AuthRoutes");
+const { getQuote } = require("./services/finnhub");
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -28,8 +30,56 @@ app.use(express.json());
 app.use("/", authRoute);
 
 app.get("/allHoldings", async (req, res) => {
-  let allHoldings = await HoldingsModel.find({});
-  res.json(allHoldings);
+  try {
+    const holdings = await HoldingsModel.find({});
+
+    const enrichedHoldings = await Promise.all(
+      holdings.map(async (h) => {
+        const quote = await getQuote(h.name);
+
+        const avg = typeof h.avg === "number" ? h.avg : 0;
+        const qty = typeof h.qty === "number" ? h.qty : 0;
+
+        const rawLtp = quote?.c;
+
+        const simulatedDay = Math.random() * 2 - 1;
+
+        const ltp = avg * (1 + simulatedDay / 100);
+
+        let dayPercent = simulatedDay;
+
+        const curValue = ltp * qty;
+        const pnl = curValue - avg * qty;
+
+        const netPercent = avg > 0 ? ((ltp - avg) / avg) * 100 : 0;
+
+        const safeNetPercent = Number.isFinite(netPercent) ? netPercent : 0;
+        const safeDayPercent = Number.isFinite(dayPercent) ? dayPercent : 0;
+
+        if (!Number.isFinite(netPercent) || !Number.isFinite(dayPercent)) {
+          console.log("SANITY CHECK FAIL:", {
+            name: h.name,
+            netPercent,
+            dayPercent,
+            quote,
+          });
+        }
+
+        return {
+          ...h.toObject(),
+          price: Number.isFinite(ltp) ? ltp : avg,
+          net: `${safeNetPercent >= 0 ? "+" : ""}${safeNetPercent.toFixed(2)}%`,
+          day: `${dayPercent >= 0 ? "+" : ""}${dayPercent.toFixed(2)}%`,
+          isLoss: safeNetPercent < 0,
+        };
+      })
+    );
+    // console.log("Holdings: ", holdings);
+    res.json(enrichedHoldings);
+  } catch (err) {
+    console.error("holdings error", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get("/allPositions", async (req, res) => {
