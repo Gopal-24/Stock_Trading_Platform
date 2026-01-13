@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import axios from 'axios'
 
 import Tooltip from '@mui/material/Tooltip'
 import Grow from '@mui/material/Grow'
@@ -7,14 +8,21 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 
-import { watchlist } from '../data/data'
-
 import GeneralContext from './GeneralContext'
 import DoughnutChart from './DoughnutChart'
 
-const labels = watchlist.map(stock => stock.name)
-
 const WatchList = () => {
+  const [watchlist, setWatchlist] = useState([])
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:8080/watchlist')
+      .then(res => setWatchlist(res.data))
+      .catch(err => console.log(err))
+  }, [])
+
+  const labels = watchlist.map(stock => stock.name)
+
   const data = {
     labels,
     datasets: [

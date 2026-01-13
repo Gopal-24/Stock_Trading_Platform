@@ -1,11 +1,7 @@
 const axios = require("axios");
+const { getCachedQuote, setCachedQuote } = require("./quoteCache");
 
 const FINNHUB_BASE = "https://finnhub.io/api/v1";
-
-const quoteCache = new Map();
-const CACHE_TTL = 60 * 1000;
-
-const cache = {};
 
 const symbolMap = {
   RELIANCE: "RELIANCE.NS",
@@ -13,15 +9,16 @@ const symbolMap = {
   HDFCBANK: "HDFCBANK.NS",
   ITC: "ITC.NS",
   SBIN: "SBIN.NS",
+  INFY: "INFY.NS",
+  WIPRO: "WIPRO.NS",
 };
 
 async function getQuote(symbol) {
   const mapped = symbolMap[symbol] || symbol;
-  const now = Date.now();
 
-  if (cache[mapped] && now - cache[mapped].timestamp < CACHE_TTL) {
-    return cache[mapped].data;
-  }
+  const cached = getCachedQuote(mapped);
+
+  if (cached) return cached;
 
   try {
     const res = await axios.get(`${FINNHUB_BASE}/quote`, {
@@ -31,17 +28,12 @@ async function getQuote(symbol) {
       },
     });
 
-    const data = res.data;
+    setCachedQuote(mapped, res.data);
 
-    cache[mapped] = {
-      data,
-      timestamp: now,
-    };
-
-    return data;
+    return res.data;
   } catch (err) {
     console.warn(`Finnhub unavailable for ${mapped}`);
-    return cache[mapped]?.data || { c: null, dp: null };
+    return null;
   }
 }
 

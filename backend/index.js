@@ -29,6 +29,24 @@ app.use(express.json());
 
 app.use("/", authRoute);
 
+app.get("/watchlist", async (req, res) => {
+  const symbols = ["INFY", "ONGC", "TCS", "WIPRO", "RELIANCE"];
+
+  const watchlist = symbols.map((name) => {
+    const basePrice = Math.floor(Math.random() * 3000) + 100;
+    const percent = Math.random() * 2 - 1;
+
+    return {
+      name,
+      price: +(basePrice * (1 + percent / 100)).toFixed(2),
+      percent: `${percent >= 0 ? "+" : ""}${percent.toFixed(2)}%`,
+      isDown: percent < 0,
+    };
+  });
+
+  res.json(watchlist);
+});
+
 app.get("/allHoldings", async (req, res) => {
   try {
     const holdings = await HoldingsModel.find({});
@@ -50,27 +68,14 @@ app.get("/allHoldings", async (req, res) => {
 
         const curValue = ltp * qty;
         const pnl = curValue - avg * qty;
-
         const netPercent = avg > 0 ? ((ltp - avg) / avg) * 100 : 0;
-
-        const safeNetPercent = Number.isFinite(netPercent) ? netPercent : 0;
-        const safeDayPercent = Number.isFinite(dayPercent) ? dayPercent : 0;
-
-        if (!Number.isFinite(netPercent) || !Number.isFinite(dayPercent)) {
-          console.log("SANITY CHECK FAIL:", {
-            name: h.name,
-            netPercent,
-            dayPercent,
-            quote,
-          });
-        }
 
         return {
           ...h.toObject(),
-          price: Number.isFinite(ltp) ? ltp : avg,
-          net: `${safeNetPercent >= 0 ? "+" : ""}${safeNetPercent.toFixed(2)}%`,
+          price: ltp,
+          net: `${netPercent >= 0 ? "+" : ""}${netPercent.toFixed(2)}%`,
           day: `${dayPercent >= 0 ? "+" : ""}${dayPercent.toFixed(2)}%`,
-          isLoss: safeNetPercent < 0,
+          isLoss: netPercent < 0,
         };
       })
     );
