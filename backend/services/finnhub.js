@@ -32,7 +32,6 @@ async function getQuote(symbol) {
 
     return res.data;
   } catch (err) {
-    console.warn(`Finnhub unavailable for ${mapped}`);
     return null;
   }
 }

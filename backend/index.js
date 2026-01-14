@@ -3,10 +3,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const axios = require("axios");
+const jwt = require("jsonwebtoken");
 
 const { HoldingsModel } = require("./models/HoldingsModel");
 const { PositionsModel } = require("./models/PositionsModel");
 const { OrdersModel } = require("./models/OrdersModel");
+const User = require("./models/UserModel");
 const authRoute = require("./routes/AuthRoutes");
 const { getQuote } = require("./services/finnhub");
 
@@ -45,6 +47,48 @@ app.get("/watchlist", async (req, res) => {
   });
 
   res.json(watchlist);
+});
+
+app.get("/summary", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    let username = "User";
+
+    if (token) {
+      const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+      const user = await User.findById(decoded.id);
+      if (user) {
+        console.log(username);
+      }
+    }
+
+    const holdings = await HoldingsModel.find({});
+
+    let investment = 0;
+    let currValue = 0;
+
+    holdings.forEach((h) => {
+      investment += h.avg * h.qty;
+      currValue += h.price * h.qty;
+    });
+
+    const pnl = currValue - investment;
+    const pnlPercent = investment > 0 ? (pnl / investment) * 100 : 0;
+
+    res.json({
+      username,
+      holdingsCount: holdings.length,
+      investment: +investment.toFixed(2),
+      currentValue: +currValue.toFixed(2),
+      pnl: +pnl.toFixed(2),
+      pnlPercent: +pnlPercent.toFixed(2),
+      marginAvailable: 3740,
+      openingBalance: 3740,
+      marginUsed: 0,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get("/allHoldings", async (req, res) => {
