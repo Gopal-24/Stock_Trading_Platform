@@ -211,6 +211,47 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
+app.get("/funds", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    let username = "User";
+
+    if (token) {
+      const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+      const user = await User.findById(decoded.id);
+      if (user) username = user.username;
+    }
+
+    // For now: simulated ledger
+    const openingBalance = 4043.1;
+    const usedMargin = 3757.3;
+    const availableMargin = openingBalance - usedMargin;
+
+    res.json({
+      username,
+      equity: {
+        openingBalance,
+        usedMargin,
+        availableMargin,
+        availableCash: availableMargin,
+        payin: 4064.0,
+        span: 0,
+        deliveryMargin: 0,
+        exposure: 0,
+        optionsPremium: 0,
+        collateralLiquid: 0,
+        collateralEquity: 0,
+        totalCollateral: 0,
+      },
+      commodity: {
+        hasAccount: false,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 mongoose
   .connect(mongo_url)
   .then(() => {

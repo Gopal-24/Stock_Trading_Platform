@@ -1,11 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import { Link } from 'react-router-dom'
 
 const Funds = () => {
+  const [funds, setFunds] = useState(null)
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:8080/funds', { withCredentials: true })
+      .then(res => setFunds(res.data))
+      .catch(err => console.log(err))
+  }, [])
+
+  if (!funds) return null
+
+  const { equity, commodity } = funds
+
   return (
     <>
       <div className='funds'>
-        <p>Instant, zero-cost fund transfers with UPI </p>
+        <p>Instant, zero-cost fund transfers with UPI</p>
         <Link className='btn btn-green'>Add funds</Link>
         <Link className='btn btn-blue'>Withdraw</Link>
       </div>
@@ -17,72 +31,57 @@ const Funds = () => {
           </span>
 
           <div className='table'>
-            <div className='data'>
-              <p>Available margin</p>
-              <p className='imp colored'>4,043.10</p>
-            </div>
-            <div className='data'>
-              <p>Used margin</p>
-              <p className='imp'>3,757.30</p>
-            </div>
-            <div className='data'>
-              <p>Available cash</p>
-              <p className='imp'>4,043.10</p>
-            </div>
+            <FundRow
+              label='Available margin'
+              value={equity.availableMargin}
+              highlight
+            />
+            <FundRow label='Used margin' value={equity.usedMargin} />
+            <FundRow label='Available cash' value={equity.availableCash} />
+
             <hr />
-            <div className='data'>
-              <p>Opening Balance</p>
-              <p>4,043.10</p>
-            </div>
-            <div className='data'>
-              <p>Opening Balance</p>
-              <p>3736.40</p>
-            </div>
-            <div className='data'>
-              <p>Payin</p>
-              <p>4064.00</p>
-            </div>
-            <div className='data'>
-              <p>SPAN</p>
-              <p>0.00</p>
-            </div>
-            <div className='data'>
-              <p>Delivery margin</p>
-              <p>0.00</p>
-            </div>
-            <div className='data'>
-              <p>Exposure</p>
-              <p>0.00</p>
-            </div>
-            <div className='data'>
-              <p>Options premium</p>
-              <p>0.00</p>
-            </div>
+
+            <FundRow label='Opening balance' value={equity.openingBalance} />
+            <FundRow label='Payin' value={equity.payin} />
+            <FundRow label='SPAN' value={equity.span} />
+            <FundRow label='Delivery margin' value={equity.deliveryMargin} />
+            <FundRow label='Exposure' value={equity.exposure} />
+            <FundRow label='Options premium' value={equity.optionsPremium} />
+
             <hr />
-            <div className='data'>
-              <p>Collateral (Liquid funds)</p>
-              <p>0.00</p>
-            </div>
-            <div className='data'>
-              <p>Collateral (Equity)</p>
-              <p>0.00</p>
-            </div>
-            <div className='data'>
-              <p>Total Collateral</p>
-              <p>0.00</p>
-            </div>
+
+            <FundRow
+              label='Collateral (Liquid funds)'
+              value={equity.collateralLiquid}
+            />
+            <FundRow
+              label='Collateral (Equity)'
+              value={equity.collateralEquity}
+            />
+            <FundRow label='Total collateral' value={equity.totalCollateral} />
           </div>
         </div>
 
         <div className='col'>
-          <div className='commodity'>
-            <p>You don't have a commodity account</p>
-            <Link className='btn btn-blue'>Open Account</Link>
-          </div>
+          {!commodity.hasAccount && (
+            <div className='commodity'>
+              <p>You don't have a commodity account</p>
+              <Link className='btn btn-blue'>Open Account</Link>
+            </div>
+          )}
         </div>
       </div>
     </>
   )
 }
+
+const FundRow = ({ label, value, highlight }) => (
+  <div className='data'>
+    <p>{label}</p>
+    <p className={`imp ${highlight ? 'colored' : ''}`}>
+      {Number(value).toFixed(2)}
+    </p>
+  </div>
+)
 
 export default Funds
