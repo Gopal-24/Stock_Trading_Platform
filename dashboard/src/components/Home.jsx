@@ -1,38 +1,17 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-
+import { useContext } from 'react'
+import AuthContext from '../context/AuthContext'
 import Dashboard from './Dashboard'
 import TopBar from './Topbar'
 
 function Home () {
-  const [loading, setLoading] = useState(true)
+  const { loading, user } = useContext(AuthContext)
 
-  useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        const res = await axios.post(
-          'http://localhost:8080/verify',
-          {},
-          {
-            withCredentials: true
-          }
-        )
+  if (loading) return null
 
-        if (!res.data.status) {
-          window.location.href = 'http://localhost:5173/login'
-        }
-      } catch (e) {
-        window.location.href = 'http://localhost:5173/login'
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    verifyUser()
-  }, [])
-
-  if (loading) return null // ya loader
-
+  if (!user) {
+    window.location.href = 'http://localhost:5173/login'
+    return null
+  }
   return (
     <>
       <TopBar />

@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
+
+import AuthContext from '../context/AuthContext'
 
 const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState(0)
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
+
+  const { user } = useContext(AuthContext)
 
   const handleMenuClick = index => {
     setSelectedMenu(index)
@@ -11,6 +15,20 @@ const Menu = () => {
 
   const handleProfileClick = () => {
     setIsProfileDropdownOpen(!isProfileDropdownOpen)
+  }
+
+  const handleLogout = async e => {
+    e.stopPropagation()
+
+    try {
+      await fetch('http://localhost:8080/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+      window.location.href = 'http://localhost:5173/login'
+    } catch (err) {
+      console.error('Logout failed:', err.message)
+    }
   }
 
   const menuClass = 'menu'
@@ -89,9 +107,30 @@ const Menu = () => {
           </li>
         </ul>
         <hr />
-        <div className='profile' onClick={handleProfileClick}>
-          <div className='avatar'>ZU</div>
-          <p className='username'>USERID</p>
+        <div className='profile dropdown '>
+          <div className='profile-trigger' onClick={handleProfileClick}>
+            <div className='avatar'>
+              {user ? user.slice(0, 2).toUpperCase() : 'U'}
+            </div>
+            <p className='username'>{user}</p>
+          </div>
+          {isProfileDropdownOpen && (
+            <>
+              <ul className='dropdown-menu dropdown-menu-end show'>
+                <li>
+                  <h6 className='dropdown-header'>{user}</h6>
+                </li>
+                <li>
+                  <button
+                    className='btn dropdown-item text-danger'
+                    onClick={handleLogout}
+                  >
+                    LOGOUT
+                  </button>
+                </li>
+              </ul>
+            </>
+          )}
         </div>
       </div>
     </div>
