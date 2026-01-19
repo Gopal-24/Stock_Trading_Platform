@@ -60,11 +60,6 @@ function Navbar () {
                   Support
                 </Link>
               </li>
-              <li className='nav-item'>
-                <Link className='nav-link active' to='#'>
-                  <i className='fa-solid fa-bars'></i>
-                </Link>
-              </li>
             </ul>
           </form>
         </div>
