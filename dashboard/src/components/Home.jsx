@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import AuthContext from '../context/AuthContext'
 import Dashboard from './Dashboard'
-import TopBar from './Topbar'
+import TopBar from './TopBar'
 
 function Home () {
   const { loading, user } = useContext(AuthContext)
