@@ -22,9 +22,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: [
+      "https://stock-trading-platform-1-yx5q.onrender.com",
+      "https://stock-trading-platform-1-2.onrender.com",
+    ],
     credentials: true,
-  })
+  }),
 );
 app.use(cookieParser());
 app.use(express.json());
@@ -121,7 +124,7 @@ app.get("/allHoldings", async (req, res) => {
           day: `${dayPercent >= 0 ? "+" : ""}${dayPercent.toFixed(2)}%`,
           isLoss: netPercent < 0,
         };
-      })
+      }),
     );
     // console.log("Holdings: ", holdings);
     res.json(enrichedHoldings);
