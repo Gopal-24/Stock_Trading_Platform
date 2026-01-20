@@ -7,7 +7,7 @@ const Funds = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/funds', { withCredentials: true })
+      .get(`${import.meta.env.VITE_URL}/funds`, { withCredentials: true })
       .then(res => setFunds(res.data))
       .catch(err => console.log(err))
   }, [])

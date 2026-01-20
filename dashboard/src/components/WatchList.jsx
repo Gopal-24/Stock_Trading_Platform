@@ -16,7 +16,7 @@ const WatchList = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/watchlist')
+      .get(`${import.meta.env.VITE_URL}/watchlist`)
       .then(res => setWatchlist(res.data))
       .catch(err => console.log(err))
   }, [])

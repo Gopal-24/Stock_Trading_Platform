@@ -21,11 +21,12 @@ const Menu = () => {
     e.stopPropagation()
 
     try {
-      await fetch('http://localhost:8080/logout', {
+      await fetch(`${import.meta.env.VITE_URL}/logout`, {
         method: 'POST',
         credentials: 'include'
       })
-      window.location.href = 'http://localhost:5173/login'
+      window.location.href =
+        'https://stock-trading-platform-1-yx5q.onrender.com/login'
     } catch (err) {
       console.error('Logout failed:', err.message)
     }

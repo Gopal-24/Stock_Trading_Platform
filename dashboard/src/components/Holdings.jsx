@@ -9,7 +9,7 @@ const Holdings = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/allHoldings')
+      .get(`${import.meta.env.VITE_URL}/allHoldings`)
       .then(res => {
         console.log('holdings from backend', res.data)
         setAllHoldings(res.data)

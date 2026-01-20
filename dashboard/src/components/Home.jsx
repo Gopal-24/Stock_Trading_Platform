@@ -9,7 +9,7 @@ function Home () {
   if (loading) return null
 
   if (!user) {
-    window.location.href = 'http://localhost:5173/login'
+    window.location.href = `https://stock-trading-platform-1-yx5q.onrender.com/login`
     return null
   }
   return (

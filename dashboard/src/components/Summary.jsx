@@ -6,7 +6,7 @@ const Summary = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/summary', { withCredentials: true })
+      .get(`${import.meta.env.VITE_URL}/summary`, { withCredentials: true })
       .then(res => setSummary(res.data))
       .catch(console.error)
   }, [])

@@ -6,7 +6,7 @@ const Orders = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/allOrders')
+      .get(`${import.meta.env.VITE_URL}/allOrders`)
       .then(res => setOrders(res.data))
       .catch(err => console.error(err))
   }, [])

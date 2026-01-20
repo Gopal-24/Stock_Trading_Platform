@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     const verify = async () => {
       try {
         const res = await axios.post(
-          'http://localhost:8080/verify',
+          `${import.meta.env.VITE_URL}/verify`,
           {},
           { withCredentials: true }
         )
