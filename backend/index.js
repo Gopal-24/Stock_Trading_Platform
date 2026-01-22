@@ -27,6 +27,8 @@ app.use(
       "https://stock-trading-platform-1-2.onrender.com",
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.use(cookieParser());
