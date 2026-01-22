@@ -41,7 +41,8 @@ const Signup = () => {
       if (success) {
         handleSuccess(message)
         setTimeout(() => {
-          window.location.href = 'http://localhost:5174'
+          window.location.href =
+            'https://stock-trading-platform-1-2.onrender.com'
         }, 800)
       } else {
         handleError(message)
