@@ -42,7 +42,7 @@ const Login = () => {
         handleSuccess(message)
         setTimeout(() => {
           window.location.href =
-            'https://stock-trading-platform-1-2.onrender.com'
+            'https://stock-trading-platform-2-ckcy.onrender.com'
         }, 1000)
       } else {
         handleError(message)

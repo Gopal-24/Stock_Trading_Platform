@@ -26,7 +26,7 @@ const Menu = () => {
         credentials: 'include'
       })
       window.location.href =
-        'https://stock-trading-platform-1-yx5q.onrender.com'
+        'https://stock-trading-platform-1-9y97.onrender.com'
     } catch (err) {
       console.error('Logout failed:', err.message)
     }
