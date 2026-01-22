@@ -23,8 +23,8 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://stock-trading-platform-1-yx5q.onrender.com",
-      "https://stock-trading-platform-1-2.onrender.com",
+      "https://stock-trading-platform-1-9y97.onrender.com",
+      "https://stock-trading-platform-2-ckcy.onrender.com",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
